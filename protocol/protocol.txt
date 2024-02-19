@@ -1,0 +1,56 @@
+Patern du protocol:
+    [(X)XYY] PHRASE\r\n\x4
+
+Décomposition du patern :
+    Code au format XYY ou XXYY:
+        - X ou XX correspond au numéro de la commande envoyé par le client. (voir si dessous)
+        - YY correspond au code de status de la requête. (voir si dessous)
+
+    PHRASE:
+        Décrit le status YY.
+
+    Paramètre(s):
+        Sert seulement au traitement des events, ne sera pas affiché sur le client.
+
+    Délimiteurs:
+        - \x3 (code ascii 3) est utilisé pour séparer les données.
+        - \x4 (code ascii 4) est utilisé pour indiquer la fin des données.
+
+Si YY vaut 00 alors le serveur envoye la donnée demandée par le client dans un nouveau print, sous forme de Liste (il faut donc read 2x):
+    donnée1\x3donnée2\x3donnéeN\r\n
+    donnée1\x3donnée2\x3donnéeN\r\n\x4
+
+--------------------------------------------------------------------------------------------------
+
+Liste des codes XX :
+    0 -> /help
+    1 -> /login [“user_name”]
+    2 -> /logout
+    3 -> /users
+    4 -> /user [“user_uuid”]
+    5 -> /send [“user_uuid”] [“message_body”]
+    6 -> /messages [“user_uuid”]
+    7 -> /subscribe [“team_uuid”]
+    8 -> /subscribed ?[“team_uuid”]
+    9 -> /unsubscribe [“team_uuid”]
+    10 -> /use ?[“team_uuid”] ?[“channel_uuid”] ?[“thread_uuid”]
+    11 -> /create
+    12 -> /list
+    13 -> /info
+
+Listes des status YY :
+    00 -> Commande OK
+    11 -> Utilisateur invalide.
+    12 -> Team invalide.
+    13 -> Channel invalide.
+    14 -> Thread invalide.
+    15 -> L'élement existe déjà.
+    50 -> Mauvaise syntaxe (paramètres).
+    60 -> Paramètre(s) trop grand.
+    70 -> Erreur serveur quelconque.
+
+Liste des codes spéciaux (sans commande) :
+    2000 -> Service ready for new user.
+    3000 -> You received a message.
+    5000 -> Wrong command syntax.
+    10000 -> Not logged in.
